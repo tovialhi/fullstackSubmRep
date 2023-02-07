@@ -76,6 +76,8 @@ const App = () => {
         showError(`Person ${person.name} was added`, {color: 'green'})
         setNewName('')
         setNewNumber('')
+      }).catch(error => {
+        showError(error.response.data.error, {color: 'red'})
       })
   }
 
@@ -93,6 +95,23 @@ const App = () => {
     showError(msg, style)
   }
 
+  const handleDelete = (person) => {
+    if (window.confirm(`Delete ${person.name} ?`)) {
+
+      personsService.getAll().then(responsePersons => {
+          if (!responsePersons.some(per => per.id === person.id)) {
+              updateAfterDelete(`Person ${person.name} has already been removed from server`, {color: 'red'})
+              return
+          }
+          personsService.deletePerson(person.id).then(() => {
+            setPersons(persons.filter(per => per.id !== person.id))
+            updateAfterDelete(`Person ${person.name} was deleted`, {color: 'green'})
+          })
+      })
+
+  }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -101,7 +120,7 @@ const App = () => {
       <h3>add a new</h3>
       <PersonForm name={newName} num={newNumber} onSub={addPerson} hNameChange={handleNameChange} hNumChange={handleNumberChange}/>
       <h3>Numbers</h3>
-      <Persons persons={personsToShow} updateAfterDelete={updateAfterDelete}/>
+      <Persons persons={personsToShow} handleDelete={handleDelete} />
     </div>
   )
 
