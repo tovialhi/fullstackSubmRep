@@ -1,4 +1,4 @@
-
+const loginRouter = require('./controllers/login')
 const config = require('./utils/config')
 const express = require('express')
 require('express-async-errors')
@@ -12,6 +12,7 @@ const logger = require('./utils/logger')
 mongoose.set('strictQuery', false)
 
 const blogsRouter = require('./controllers/blogs')
+const usersRouter = require('./controllers/users')
 
 morgan.token('content', function (req) {if (req.method === 'POST') return JSON.stringify(req.body) })
 
@@ -31,6 +32,8 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :c
 // app.use(middleware.requestLogger)
 
 app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/login', loginRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
